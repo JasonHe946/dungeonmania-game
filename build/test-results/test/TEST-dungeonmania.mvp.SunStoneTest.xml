@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dungeonmania.mvp.SunStoneTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-11-11T03:57:01" hostname="Jasons-MacBook-Air.local" time="0.073">
+  <properties/>
+  <testcase name="Test player can pick up a sun stone and add to inventory" classname="dungeonmania.mvp.SunStoneTest" time="0.014"/>
+  <testcase name="Test building a shield with a sun stone" classname="dungeonmania.mvp.SunStoneTest" time="0.018"/>
+  <testcase name="Test achieving a basic treasure goal with one sun stone and 2 treasures" classname="dungeonmania.mvp.SunStoneTest" time="0.014"/>
+  <testcase name="Test player can use a sun stone to open and walk through a door" classname="dungeonmania.mvp.SunStoneTest" time="0.014"/>
+  <testcase name="Test player can unlock two doors using the same sun stone" classname="dungeonmania.mvp.SunStoneTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[[Test worker] INFO org.reflections.Reflections - Reflections took 4 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 5 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 5 ms to scan 2 urls, producing 134 keys and 134 values
+]]></system-err>
+</testsuite>

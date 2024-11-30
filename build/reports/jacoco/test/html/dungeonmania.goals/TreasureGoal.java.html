@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TreasureGoal.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">assignment-ii</a> &gt; <a href="index.source.html" class="el_package">dungeonmania.goals</a> &gt; <span class="el_source">TreasureGoal.java</span></div><h1>TreasureGoal.java</h1><pre class="source lang-java linenums">package dungeonmania.goals;
+
+import dungeonmania.Game;
+import dungeonmania.entities.collectables.SunStone;
+import dungeonmania.entities.collectables.Treasure;
+
+public class TreasureGoal implements Goal {
+
+    private String type;
+    private int target;
+
+<span class="nc" id="L12">    public TreasureGoal(String type) {</span>
+<span class="nc" id="L13">        this.type = type;</span>
+<span class="nc" id="L14">    }</span>
+
+<span class="fc" id="L16">    public TreasureGoal(String type, int target) {</span>
+<span class="fc" id="L17">        this.type = type;</span>
+<span class="fc" id="L18">        this.target = target;</span>
+<span class="fc" id="L19">    }</span>
+
+    public boolean achieved(Game game) {
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        if (game.getPlayer() == null) return false;</span>
+<span class="fc" id="L23">        int treasureCollected = game.getInitialTreasureCount() - game.getMap().getEntities(Treasure.class).size();</span>
+<span class="fc" id="L24">        int stonesCollected = game.getInitialStoneCount() - game.getMap().getEntities(SunStone.class).size();</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        return treasureCollected + stonesCollected &gt;= target;</span>
+    }
+
+    public String toString(Game game) {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (this.achieved(game)) return &quot;&quot;;</span>
+<span class="fc" id="L30">        return &quot;:treasure&quot;;</span>
+    }
+
+    public String getType() {
+<span class="nc" id="L34">        return type;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Mercenary.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">assignment-ii</a> &gt; <a href="index.source.html" class="el_package">dungeonmania.entities.enemies</a> &gt; <span class="el_source">Mercenary.java</span></div><h1>Mercenary.java</h1><pre class="source lang-java linenums">package dungeonmania.entities.enemies;
+
+
+import dungeonmania.Game;
+import dungeonmania.entities.Entity;
+import dungeonmania.entities.Interactable;
+import dungeonmania.entities.Player;
+import dungeonmania.entities.buildables.Sceptre;
+import dungeonmania.entities.collectables.Treasure;
+import dungeonmania.map.GameMap;
+import dungeonmania.util.Position;
+
+public class Mercenary extends Enemy implements Interactable {
+    public static final int DEFAULT_BRIBE_AMOUNT = 1;
+    public static final int DEFAULT_BRIBE_RADIUS = 1;
+    public static final double DEFAULT_ATTACK = 5.0;
+    public static final double DEFAULT_HEALTH = 10.0;
+
+<span class="fc" id="L19">    private int bribeAmount = Mercenary.DEFAULT_BRIBE_AMOUNT;</span>
+<span class="fc" id="L20">    private int bribeRadius = Mercenary.DEFAULT_BRIBE_RADIUS;</span>
+<span class="fc" id="L21">    private boolean allied = false;</span>
+<span class="fc" id="L22">    private boolean adjacent = false;</span>
+
+    public Mercenary(Position position, double health, double attack, int bribeAmount, int bribeRadius) {
+<span class="fc" id="L25">        super(position, health, attack);</span>
+<span class="fc" id="L26">        this.bribeAmount = bribeAmount;</span>
+<span class="fc" id="L27">        this.bribeRadius = bribeRadius;</span>
+<span class="fc" id="L28">    }</span>
+
+    public boolean isAllied() {
+<span class="fc" id="L31">        return allied;</span>
+    }
+
+    @Override
+    public void onOverlap(GameMap map, Entity entity) {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (allied) return;</span>
+<span class="fc" id="L37">        super.onOverlap(map, entity);</span>
+<span class="fc" id="L38">    }</span>
+
+    /**
+     * check whether the current merc can be bribed
+     * @param player
+     * @return
+     */
+    private boolean canBeBribed(Player player) {
+<span class="pc bpc" id="L46" title="1 of 4 branches missed.">        return bribeRadius &gt;= 0 &amp;&amp; player.countEntityOfType(Treasure.class) &gt;= bribeAmount;</span>
+    }
+
+    /**
+     * bribe the merc
+     */
+    public void bribe(Player player) {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        for (int i = 0; i &lt; bribeAmount; i++) {</span>
+<span class="fc" id="L54">            player.use(Treasure.class);</span>
+        }
+<span class="fc" id="L56">    }</span>
+
+    public void mindControl(Player player) {
+<span class="fc" id="L59">        Sceptre sceptre = player.getInventory().getFirst(Sceptre.class);</span>
+
+<span class="fc" id="L61">        player.use(sceptre, this);</span>
+
+<span class="fc" id="L63">    }</span>
+
+    @Override
+    public void interact(Player player, Game game) {
+<span class="fc" id="L67">        allied = true;</span>
+        // bribe(player);
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (player.countEntityOfType(Sceptre.class) &gt; 0) {</span>
+<span class="fc" id="L70">            mindControl(player);</span>
+        } else {
+<span class="fc" id="L72">            bribe(player);</span>
+        }
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public void move(Game game) {
+        Position nextPos;
+<span class="fc" id="L79">        GameMap map = game.getMap();</span>
+<span class="fc" id="L80">        Position playerPos = map.getPlayer().getPosition();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (allied) {</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if (adjacent) { // if adjacent, follow player</span>
+<span class="fc" id="L83">                nextPos = map.getPlayer().getPreviousPosition();</span>
+<span class="fc" id="L84">                map.moveTo(this, nextPos);</span>
+            } else { // if not use dijkstra
+<span class="fc" id="L86">                nextPos = map.dijkstraPathFind(getPosition(), map.getPlayer().getPosition(), this);</span>
+<span class="fc" id="L87">                allowMove(game, getMovementFactor(), nextPos);</span>
+            }
+        } else {
+            // Follow hostile
+<span class="fc" id="L91">            nextPos = map.dijkstraPathFind(getPosition(), map.getPlayer().getPosition(), this);</span>
+<span class="fc" id="L92">            allowMove(game, getMovementFactor(), nextPos);</span>
+        }
+
+        // check if adjacent
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (Position.isAdjacent(playerPos, getPosition())) {</span>
+<span class="fc" id="L97">            adjacent = true;</span>
+        }
+<span class="fc" id="L99">    }</span>
+
+
+    public void setAllied(boolean allied) {
+<span class="fc" id="L103">        this.allied = allied;</span>
+<span class="fc" id="L104">    }</span>
+
+    @Override
+    public boolean isInteractable(Player player) {
+<span class="fc bfc" id="L108" title="All 6 branches covered.">        return !allied &amp;&amp; (canBeBribed(player) || player.countEntityOfType(Sceptre.class) &gt; 0);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

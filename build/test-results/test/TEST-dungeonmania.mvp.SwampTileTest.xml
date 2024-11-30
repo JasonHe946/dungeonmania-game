@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dungeonmania.mvp.SwampTileTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2022-11-11T03:57:01" hostname="Jasons-MacBook-Air.local" time="0.11">
+  <properties/>
+  <testcase name="Test that swamp tiles has no effect on players" classname="dungeonmania.mvp.SwampTileTest" time="0.015"/>
+  <testcase name="Test the effects of swamp tile on spiders" classname="dungeonmania.mvp.SwampTileTest" time="0.014"/>
+  <testcase name="Testing swamp tile has no effect on an allied mercenary and player" classname="dungeonmania.mvp.SwampTileTest" time="0.014"/>
+  <testcase name="Testing the effects of swamp tile on a hostile mercenary" classname="dungeonmania.mvp.SwampTileTest" time="0.014"/>
+  <testcase name="Testing the effects of swamp tile on a hostile assassin" classname="dungeonmania.mvp.SwampTileTest" time="0.016"/>
+  <testcase name="Testing swamp tile still has effect on a far away allied mercenary" classname="dungeonmania.mvp.SwampTileTest" time="0.017"/>
+  <testcase name="Test the effects of swamp tile on zombie toast" classname="dungeonmania.mvp.SwampTileTest" time="0.016"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 8 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 5 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 5 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 5 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 4 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 11 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 134 keys and 134 values
+]]></system-err>
+</testsuite>

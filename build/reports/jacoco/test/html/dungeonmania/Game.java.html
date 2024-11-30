@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Game.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">assignment-ii</a> &gt; <a href="index.source.html" class="el_package">dungeonmania</a> &gt; <span class="el_source">Game.java</span></div><h1>Game.java</h1><pre class="source lang-java linenums">package dungeonmania;
+
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.UUID;
+
+import dungeonmania.battles.BattleFacade;
+import dungeonmania.entities.Entity;
+import dungeonmania.entities.EntityFactory;
+import dungeonmania.entities.Interactable;
+import dungeonmania.entities.Player;
+import dungeonmania.entities.collectables.Bomb;
+import dungeonmania.entities.collectables.SunStone;
+import dungeonmania.entities.collectables.Treasure;
+import dungeonmania.entities.collectables.potions.Potion;
+import dungeonmania.entities.enemies.Enemy;
+import dungeonmania.exceptions.InvalidActionException;
+import dungeonmania.goals.Goal;
+import dungeonmania.map.GameMap;
+import dungeonmania.util.Direction;
+
+public class Game {
+    private String id;
+    private String name;
+    private Goal goals;
+    private GameMap map;
+    private Player player;
+    private BattleFacade battleFacade;
+    private int initialTreasureCount;
+    private int initialStoneCount;
+    private EntityFactory entityFactory;
+<span class="fc" id="L32">    private boolean isInTick = false;</span>
+    public static final int PLAYER_MOVEMENT = 0;
+    public static final int PLAYER_MOVEMENT_CALLBACK = 1;
+    public static final int AI_MOVEMENT = 2;
+    public static final int AI_MOVEMENT_CALLBACK = 3;
+
+<span class="fc" id="L38">    private int tickCount = 0;</span>
+<span class="fc" id="L39">    private PriorityQueue&lt;ComparableCallback&gt; sub = new PriorityQueue&lt;&gt;();</span>
+<span class="fc" id="L40">    private PriorityQueue&lt;ComparableCallback&gt; addingSub = new PriorityQueue&lt;&gt;();</span>
+
+<span class="fc" id="L42">    public Game(String dungeonName) {</span>
+<span class="fc" id="L43">        this.name = dungeonName;</span>
+<span class="fc" id="L44">        this.map = new GameMap();</span>
+<span class="fc" id="L45">        this.battleFacade = new BattleFacade();</span>
+<span class="fc" id="L46">    }</span>
+
+    public void init() {
+<span class="fc" id="L49">        this.id = UUID.randomUUID().toString();</span>
+<span class="fc" id="L50">        map.init();</span>
+<span class="fc" id="L51">        this.tickCount = 0;</span>
+<span class="fc" id="L52">        player = map.getPlayer();</span>
+<span class="fc" id="L53">        register(() -&gt; player.onTick(tickCount), PLAYER_MOVEMENT, &quot;potionQueue&quot;);</span>
+<span class="fc" id="L54">        initialTreasureCount = map.getEntities(Treasure.class).size();</span>
+<span class="fc" id="L55">        initialStoneCount = map.getEntities(SunStone.class).size();</span>
+<span class="fc" id="L56">    }</span>
+
+    public Game tick(Direction movementDirection) {
+<span class="fc" id="L59">        registerOnce(</span>
+<span class="fc" id="L60">            () -&gt; player.move(this.getMap(), movementDirection), PLAYER_MOVEMENT, &quot;playerMoves&quot;);</span>
+<span class="fc" id="L61">        tick();</span>
+<span class="fc" id="L62">        return this;</span>
+    }
+
+    public Game tick(String itemUsedId) throws InvalidActionException {
+<span class="fc" id="L66">        Entity item = player.getEntity(itemUsedId);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (item == null)</span>
+<span class="fc" id="L68">            throw new InvalidActionException(String.format(&quot;Item with id %s doesn't exist&quot;, itemUsedId));</span>
+<span class="fc bfc" id="L69" title="All 4 branches covered.">        if (!(item instanceof Bomb) &amp;&amp; !(item instanceof Potion))</span>
+<span class="fc" id="L70">            throw new IllegalArgumentException(String.format(&quot;%s cannot be used&quot;, item.getClass()));</span>
+
+<span class="fc" id="L72">        registerOnce(() -&gt; {</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (item instanceof Bomb)</span>
+<span class="fc" id="L74">                player.use((Bomb) item, map);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (item instanceof Potion)</span>
+<span class="fc" id="L76">                player.use((Potion) item, tickCount);</span>
+<span class="fc" id="L77">        }, PLAYER_MOVEMENT, &quot;playerUsesItem&quot;);</span>
+<span class="fc" id="L78">        tick();</span>
+<span class="fc" id="L79">        return this;</span>
+    }
+
+    /**
+     * Battle between player and enemy
+     * @param player
+     * @param enemy
+     */
+    public void battle(Player player, Enemy enemy) {
+<span class="fc" id="L88">        battleFacade.battle(this, player, enemy);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (player.getBattleStatistics().getHealth() &lt;= 0) {</span>
+<span class="fc" id="L90">            map.destroyEntity(player);</span>
+        }
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (enemy.getBattleStatistics().getHealth() &lt;= 0) {</span>
+<span class="fc" id="L93">            map.destroyEntity(enemy);</span>
+        }
+<span class="fc" id="L95">    }</span>
+
+    public Game build(String buildable) throws InvalidActionException {
+<span class="fc" id="L98">        List&lt;String&gt; buildables = player.getBuildables(getMap());</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (!buildables.contains(buildable)) {</span>
+<span class="fc" id="L100">            throw new InvalidActionException(String.format(&quot;%s cannot be built&quot;, buildable));</span>
+        }
+<span class="fc" id="L102">        registerOnce(() -&gt; player.build(buildable, entityFactory), PLAYER_MOVEMENT, &quot;playerBuildsItem&quot;);</span>
+<span class="fc" id="L103">        tick();</span>
+<span class="fc" id="L104">        return this;</span>
+    }
+
+    public Game interact(String entityId) throws IllegalArgumentException, InvalidActionException {
+<span class="fc" id="L108">        Entity e = map.getEntity(entityId);</span>
+<span class="pc bpc" id="L109" title="1 of 4 branches missed.">        if (e == null || !(e instanceof Interactable))</span>
+<span class="fc" id="L110">            throw new IllegalArgumentException(&quot;Entity cannot be interacted&quot;);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (!((Interactable) e).isInteractable(player)) {</span>
+<span class="fc" id="L112">            throw new InvalidActionException(&quot;Entity cannot be interacted&quot;);</span>
+        }
+<span class="fc" id="L114">        registerOnce(</span>
+<span class="fc" id="L115">            () -&gt; ((Interactable) e).interact(player, this), PLAYER_MOVEMENT, &quot;playerBuildsItem&quot;);</span>
+<span class="fc" id="L116">        tick();</span>
+<span class="fc" id="L117">        return this;</span>
+    }
+
+    public &lt;T extends Entity&gt; long countEntities(Class&lt;T&gt; type) {
+<span class="nc" id="L121">        return map.countEntities(type);</span>
+    }
+
+    public void register(Runnable r, int priority, String id) {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (isInTick)</span>
+<span class="fc" id="L126">            addingSub.add(new ComparableCallback(r, priority, id));</span>
+        else
+<span class="fc" id="L128">            sub.add(new ComparableCallback(r, priority, id));</span>
+<span class="fc" id="L129">    }</span>
+
+    public void registerOnce(Runnable r, int priority, String id) {
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if (isInTick)</span>
+<span class="nc" id="L133">            addingSub.add(new ComparableCallback(r, priority, id, true));</span>
+        else
+<span class="fc" id="L135">            sub.add(new ComparableCallback(r, priority, id, true));</span>
+<span class="fc" id="L136">    }</span>
+
+    public void unsubscribe(String id) {
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        for (ComparableCallback c : sub) {</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">            if (id.equals(c.getId())) {</span>
+<span class="fc" id="L141">                c.invalidate();</span>
+            }
+<span class="fc" id="L143">        }</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">        for (ComparableCallback c : addingSub) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">            if (id.equals(c.getId())) {</span>
+<span class="nc" id="L146">                c.invalidate();</span>
+            }
+<span class="nc" id="L148">        }</span>
+<span class="fc" id="L149">    }</span>
+
+    public int tick() {
+<span class="fc" id="L152">        isInTick = true;</span>
+<span class="fc" id="L153">        sub.forEach(s -&gt; s.run());</span>
+<span class="fc" id="L154">        isInTick = false;</span>
+<span class="fc" id="L155">        sub.addAll(addingSub);</span>
+<span class="fc" id="L156">        addingSub = new PriorityQueue&lt;&gt;();</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        sub.removeIf(s -&gt; !s.isValid());</span>
+<span class="fc" id="L158">        tickCount++;</span>
+        // update the weapons/potions duration
+<span class="fc" id="L160">        return tickCount;</span>
+    }
+
+    public int getTick() {
+<span class="fc" id="L164">        return this.tickCount;</span>
+    }
+
+    public String getId() {
+<span class="fc" id="L168">        return id;</span>
+    }
+
+    public void setId(String id) {
+<span class="nc" id="L172">        this.id = id;</span>
+<span class="nc" id="L173">    }</span>
+
+    public String getName() {
+<span class="fc" id="L176">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="nc" id="L180">        this.name = name;</span>
+<span class="nc" id="L181">    }</span>
+
+    public Goal getGoals() {
+<span class="fc" id="L184">        return goals;</span>
+    }
+
+    public void setGoals(Goal goals) {
+<span class="fc" id="L188">        this.goals = goals;</span>
+<span class="fc" id="L189">    }</span>
+
+    public GameMap getMap() {
+<span class="fc" id="L192">        return map;</span>
+    }
+
+    public void setMap(GameMap map) {
+<span class="fc" id="L196">        this.map = map;</span>
+<span class="fc" id="L197">    }</span>
+
+    public EntityFactory getEntityFactory() {
+<span class="fc" id="L200">        return entityFactory;</span>
+    }
+
+    public void setEntityFactory(EntityFactory factory) {
+<span class="fc" id="L204">        entityFactory = factory;</span>
+<span class="fc" id="L205">    }</span>
+
+    public Player getPlayer() {
+<span class="fc" id="L208">        return player;</span>
+    }
+
+    public void setPlayer(Player player) {
+<span class="nc" id="L212">        this.player = player;</span>
+<span class="nc" id="L213">    }</span>
+
+    public BattleFacade getBattleFacade() {
+<span class="fc" id="L216">        return battleFacade;</span>
+    }
+
+    public void setBattleFacade(BattleFacade battleFacade) {
+<span class="nc" id="L220">        this.battleFacade = battleFacade;</span>
+<span class="nc" id="L221">    }</span>
+
+    public int getInitialTreasureCount() {
+<span class="fc" id="L224">        return initialTreasureCount;</span>
+    }
+
+    public int getInitialStoneCount() {
+<span class="fc" id="L228">        return initialStoneCount;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

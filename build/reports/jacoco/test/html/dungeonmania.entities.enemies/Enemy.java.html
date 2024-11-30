@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Enemy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">assignment-ii</a> &gt; <a href="index.source.html" class="el_package">dungeonmania.entities.enemies</a> &gt; <span class="el_source">Enemy.java</span></div><h1>Enemy.java</h1><pre class="source lang-java linenums">package dungeonmania.entities.enemies;
+
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import dungeonmania.Game;
+import dungeonmania.battles.BattleStatistics;
+import dungeonmania.battles.Battleable;
+import dungeonmania.entities.Entity;
+import dungeonmania.entities.Player;
+import dungeonmania.map.GameMap;
+import dungeonmania.util.Position;
+
+public class Enemy extends Entity implements Battleable {
+    private BattleStatistics battleStatistics;
+<span class="fc" id="L17">    private Random randGen = new Random();</span>
+<span class="fc" id="L18">    private int movementFactor = 0;</span>
+
+    public Enemy(Position position, double health, double attack) {
+<span class="fc" id="L21">        super(position.asLayer(Entity.CHARACTER_LAYER));</span>
+<span class="fc" id="L22">        battleStatistics = new BattleStatistics(</span>
+                health,
+                attack,
+                0,
+                BattleStatistics.DEFAULT_DAMAGE_MAGNIFIER,
+                BattleStatistics.DEFAULT_ENEMY_DAMAGE_REDUCER);
+<span class="fc" id="L28">    }</span>
+
+    @Override
+    public boolean canMoveOnto(GameMap map, Entity entity) {
+<span class="fc" id="L32">        return entity instanceof Player;</span>
+    }
+
+    @Override
+    public BattleStatistics getBattleStatistics() {
+<span class="fc" id="L37">        return battleStatistics;</span>
+    }
+
+    @Override
+    public void onOverlap(GameMap map, Entity entity) {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (entity instanceof Player) {</span>
+<span class="fc" id="L43">            Player player = (Player) entity;</span>
+<span class="fc" id="L44">            map.getGame().battle(player, this);</span>
+        }
+<span class="fc" id="L46">    }</span>
+
+    @Override
+    public void onDestroy(GameMap map) {
+<span class="fc" id="L50">        Game g = map.getGame();</span>
+<span class="fc" id="L51">        g.unsubscribe(getId());</span>
+<span class="fc" id="L52">    }</span>
+
+
+    public void move(Game game) {
+        Position nextPos;
+<span class="fc" id="L57">        GameMap map = game.getMap();</span>
+<span class="fc" id="L58">        List&lt;Position&gt; pos = getPosition().getCardinallyAdjacentPositions();</span>
+<span class="fc" id="L59">        pos = pos</span>
+<span class="fc" id="L60">            .stream()</span>
+<span class="fc" id="L61">            .filter(p -&gt; map.canMoveTo(this, p)).collect(Collectors.toList());</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (pos.size() == 0) {</span>
+<span class="fc" id="L63">            nextPos = getPosition();</span>
+<span class="fc" id="L64">            allowMove(game, getMovementFactor(), nextPos);</span>
+        } else {
+<span class="fc" id="L66">            nextPos = pos.get(randGen.nextInt(pos.size()));</span>
+<span class="fc" id="L67">            allowMove(game, getMovementFactor(), nextPos);</span>
+        }
+
+<span class="fc" id="L70">    }</span>
+
+    public void allowMove(Game game, int movementFactor, Position nextPos) {
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (getMovementFactor() == 0) {</span>
+<span class="fc" id="L74">            game.getMap().moveTo(this, nextPos);</span>
+        } else {
+<span class="fc" id="L76">            setMovementFactor(getMovementFactor() - 1);</span>
+        }
+<span class="fc" id="L78">    }</span>
+
+    public double getHealth() {
+<span class="fc" id="L81">        return battleStatistics.getHealth();</span>
+    }
+
+    public void setHealth(double health) {
+<span class="fc" id="L85">        getBattleStatistics().setHealth(health);</span>
+<span class="fc" id="L86">    }</span>
+
+    public int getMovementFactor() {
+<span class="fc" id="L89">        return movementFactor;</span>
+    }
+
+    public void setMovementFactor(int movementFactor) {
+<span class="fc" id="L93">        this.movementFactor = movementFactor;</span>
+<span class="fc" id="L94">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dungeonmania.mvp.AssassinTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2022-11-11T03:56:59" hostname="Jasons-MacBook-Air.local" time="0.141">
+  <properties/>
+  <testcase name="Testing an assassin can be bribed with a certain amount - 100% bribe rate" classname="dungeonmania.mvp.AssassinTest" time="0.025"/>
+  <testcase name="Test assassin stops if they cannot move any closer to the player" classname="dungeonmania.mvp.AssassinTest" time="0.032"/>
+  <testcase name="Test assassin moves around a wall to get to the player" classname="dungeonmania.mvp.AssassinTest" time="0.018"/>
+  <testcase name="Test assassin in line with Player moves towards them" classname="dungeonmania.mvp.AssassinTest" time="0.02"/>
+  <testcase name="Testing a failed assassin bribe remains hostile to the player" classname="dungeonmania.mvp.AssassinTest" time="0.021"/>
+  <testcase name="Testing a second successful bribe makes the assassin an ally" classname="dungeonmania.mvp.AssassinTest" time="0.021"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[[Test worker] INFO org.reflections.Reflections - Reflections took 8 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 8 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 8 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 7 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 9 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 134 keys and 134 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 6 ms to scan 2 urls, producing 140 keys and 140 values
+[Test worker] INFO org.reflections.Reflections - Reflections took 10 ms to scan 2 urls, producing 134 keys and 134 values
+]]></system-err>
+</testsuite>
